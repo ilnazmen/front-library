@@ -3,4 +3,7 @@
   <div>
     <router-link to="/admin">admin</router-link>
   </div>
+  <div>
+    <router-link to="/login">Login</router-link>
+  </div>
 </template>

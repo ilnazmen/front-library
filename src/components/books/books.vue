@@ -24,6 +24,20 @@
           <router-link class="card-body" :to="{name: 'showBook', params: {bookId: book.id}}">
             <h5 class="card-title">{{ book.name }}</h5>
             <p class="card-text">{{ book.author }}</p>
+            <p class="card-text">{{ book.description }}</p>
+            <p class="card-text">{{ book.publisher }}</p>
+            <img :src="book.image" alt="" style="max-width: 100%">
+
+            <p class="card-text">{{ book.release_date }}</p>
+            <ul v-for="value in book.genre">
+              <li>{{value.title}}</li>
+            </ul>
+            <div>{{book.status.title}}</div>
+<!--            <div v-for="value in book.status">-->
+<!--           <p>-->
+<!--             {{value}}-->
+<!--           </p>-->
+<!--            </div>-->
           </router-link>
           <button type="button" class="btn btn-danger" @click="deleteBook(book.id)">Удалить</button>
         </div>
@@ -56,7 +70,7 @@ export default {
       books: [],
       genres: [],
       statuses: [],
-
+      book_url: null,
       genre: [],
       status: null,
       name: null,
@@ -65,7 +79,6 @@ export default {
       image: null,
       description: null,
       release_date: null,
-      formdata: null,
 
       errored: false,
       loading: true,
@@ -76,8 +89,6 @@ export default {
     changeFile(photo) {
       this.image = photo.target.files[0]
       // console.log(photo)
-      console.log(this.image)
-      console.log(this.genre)
     },
 
     showGenre() {
@@ -122,30 +133,15 @@ export default {
             this.loading = false
           })
     },
-    // bildAxios(){ if (
-    //     this.name != null,
-    //     this.author != null,
-    //     this.publisher != null,
-    //     this.description != null,
-    //     this.release_date != null,
-    //     this.status != null,
-    //     this.genre != null
-    // ) {
-    //       this.formdata = new FormData()
-    //       this.formdata.append('image', this.image),
-    //       this.formdata.append('name', this.name),
-    //       this.formdata.append('author', this.author),
-    //       this.formdata.append('publisher', this.publisher),
-    //       this.formdata.append('description', this.description),
-    //       this.formdata.append('release_date', this.release_date),
-    //       this.formdata.append('status', this.status),
-    //       this.formdata.append("genre_id", this.genre),
-    //       this.formdata.append('ImageUrl', '///')
-    //       console.log(this.formdata.get("genre_id"))
-    //
-    // }
-    // },
+    getToken(){
+      axios.get('/sanctum/csrf-cookie')
+          .then(response => {
+          return response
+      })
+
+    },
     addBook() {
+      // this.getToken();
       const data = new FormData()
       data.append('image', this.image)
       data.append('name', this.name)
@@ -161,7 +157,9 @@ export default {
 
       axios.post('//localhost:8080/api/api/books/', data)
           .then(response => {
-            console.log(response)
+            this.name = ''
+            this.books = []
+            this.showAllBooks()
           })
           .catch(error => {
             console.log(error)

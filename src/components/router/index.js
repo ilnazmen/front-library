@@ -6,41 +6,91 @@ import notFound from '../notFound.vue'
 import booksPage from '../books/books.vue'
 import showBook from '../books/showBook.vue'
 import test from '../books/date-pick.vue'
-import photoInput from "@/components/books/photo-input.vue";
+import login from '../auth/login.vue'
+import users from '../admin/createUser.vue'
+import showUser from '../admin/showUser.vue'
 
 const routes = [
     {
         path: '/admin',
-        component: adminPage
+        name:'admin',
+        component: adminPage,
+        meta: {
+            requiresAuth: true
+        }
 
     },
     {
         path: '/',
-        component: homePage
+        name: 'Home',
+        component: homePage,
+        meta: {
+            requiresAuth: true
+        }
     },
 
     {
       path: '/books',
       component: booksPage,
+        meta: {
+            requiresAuth: true
+        }
     },
     {
         path: '/:pathMatch(.*)*',
-        component: notFound
+        name: 'notFound',
+        component: notFound,
+        meta: {
+            requiresAuth: false
+        }
     },
     {
         path: '/books/:bookId',
         component: showBook,
         name: 'showBook',
         props: true,
+        meta: {
+            requiresAuth: true
+        }
     },
     {
-        path: '/test',
-        component: photoInput,
+        path: '/users/:userId',
+        component: showUser,
+        name: 'showUser',
+        props: true,
+        meta: {
+            requiresAuth: true
+        }
+    },
+    {
+        path: '/login',
+        name: 'Login',
+        component: login,
+        meta: {
+            requiresAuth: false
+        }
+    },
+    {
+        path: '/users',
+        name:'users',
+        component: users,
+        meta: {
+            requiresAuth: true
+        }
     },
 ]
 const router = createRouter({
     history: createWebHistory(),
     routes,
+})
+
+router.beforeEach((to,from) => {
+    if(to.meta.requiresAuth && !localStorage.getItem('token')){
+        return {name: 'Login'}
+    }
+    if (to.meta.requiresAuth === false && localStorage.getItem('token')) {
+        return {name: 'admin'}
+    }
 })
 
 export default router
