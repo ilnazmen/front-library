@@ -15,15 +15,13 @@
         <li class="list-group-item">{{order.status.title}}</li>
       </ul>
       <div class="card-body">
-        <button type="button" class="btn btn-primary" @click="order">Подтвердить</button>
-        <button type="button" style="float: right" class="btn btn-danger" @click="">Отменить</button>
+        <button type="button" class="btn btn-primary" @click="showModal(order.book_id.id,order.id )" >Подтвердить</button>
+        <button type="button" style="float: right" class="btn btn-danger" @click="cancel(order.id)">Отменить</button>
       </div>
     </div>
-        <modal v-model:show="modalVisible">
-          <p>Вы уверены, что хотите заказать эту книгу?</p>
-          <button type="button" class="btn btn-primary" @click="orderBook">Заказать</button>
-        </modal>
       </div>
+      <modal :visible="modalVisible" :book_id="modalData.book_id" :order_id="modalData.order_id" @close="modalVisible = false">
+      </modal>
     </div>
     <button  @click.prevent="logout" class="btn btn-primary mt-3">Выйти</button>
   </div>
@@ -31,15 +29,19 @@
 
 <script setup>
 import {useRouter} from "vue-router"
-import {onMounted, reactive} from "vue";
-import Modal from "@/components/books/modal.vue";
+import {onMounted, reactive, ref} from "vue";
+import Modal from "@/components/writer/modal.vue";
 
 const state = reactive({
   userId: '',
   userRole: '',
   orders: [],
-  modalVisible: false,
 })
+
+const modalData = ref({
+
+})
+const modalVisible = ref(false)
 
 const router = useRouter()
 const logout =  () => {
@@ -86,7 +88,17 @@ const order = async () => {
       })
 }
 
-const orderConf = async () => {
+function showModal(book_id,order_id) {
+  modalVisible.value = true
+  modalData.value = {
+    book_id:book_id,
+    order_id:order_id
+  }
+}
+
+
+
+const cancel = async () => {
 
 }
 

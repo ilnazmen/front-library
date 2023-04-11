@@ -6,26 +6,26 @@
       <input type="text" class="text-center mx-auto w-75" v-model="this.input">
     </div>
     <div class="row">
-      <div class="col-4" v-for="u in filteredBooks" :key="u.id" >
-        <div class="card mt-3" v-if="u.status.id !== 2">
+      <div class="col-4" v-for="book in filteredBooks" :key="book.id">
+        <div class="card mt-3" v-if="book.status.id !== 2">
           <div class="card-body">
-            <h5 class="card-title">{{ u.name }}</h5>
-            <p class="card-text">{{ u.author }}</p>
-            <p class="card-text">{{ u.description }}</p>
-            <p class="card-text">{{ u.publisher }}</p>
-            <img :src="u.image" alt="" style="max-width: 100%">
-            <p class="card-text">{{ u.release_date }}</p>
-            <ul v-for="value in u.genre">
-              <li>{{value.title}}</li>
+            <h5 class="card-title">{{ book.name }}</h5>
+            <p class="card-text">{{ book.author }}</p>
+            <p class="card-text">{{ book.description }}</p>
+            <p class="card-text">{{ book.publisher }}</p>
+            <img :src="book.image" alt="" style="max-width: 100%">
+            <p class="card-text">{{ book.release_date }}</p>
+            <ul v-for="value in book.genre">
+              <li>{{ value.title }}</li>
             </ul>
           </div>
-          <button type="button" class="btn btn-danger" @click="showModal(u.id)">Заказать</button>
+          <button type="button" class="btn btn-danger" @click="showModal(book.id)">Заказать</button>
         </div>
-        <modal v-model:show="modalVisible">
-          <p>Вы уверены, что хотите заказать эту книгу?</p>
-          <button type="button" class="btn btn-primary" @click="orderBook">Заказать</button>
-        </modal>
       </div>
+      <modal v-model:show="modalVisible">
+        <p>Вы уверены, что хотите заказать эту книгу?</p>
+        <button type="button" class="btn btn-primary" @click="orderBook">Заказать</button>
+      </modal>
     </div>
     <div class="alert alert-danger" role="alert" v-if="errored">
       pizda
@@ -49,10 +49,19 @@ export default {
   components: {Modal, DatePick},
   computed: {
     filteredBooks() {
-       return  this.books.filter((u) =>
-          u.author.toLowerCase().includes(this.input.toLowerCase()) ||
-          u.publisher.toLowerCase().includes(this.input.toLowerCase())
-            // u.title.toLowerCase().includes(this.input.toLowerCase())
+      return this.books.filter((book) => {
+            const genres = book.genre
+            if (
+                book.author.toLowerCase().includes(this.input.toLowerCase()) ||
+                book.publisher.toLowerCase().includes(this.input.toLowerCase()) ||
+                genres.filter((genre) => {
+                  return genre.title.toLowerCase().includes(this.input.toLowerCase())
+                }).length
+            ) {
+              return true
+            }
+            return false
+          }
       )
     },
   },
@@ -67,19 +76,19 @@ export default {
       data: null,
       userToken: '',
       userInfo: '',
-      input:'',
+      input: '',
       modalVisible: false,
       book_id: integer,
       order_date: '',
-      bookInfo: [],
-      genre: [],
-      status: '',
-      author: '',
-      publisher: '',
-      image: '',
-      description: '',
-      release_date: '',
-      name: '',
+      // bookInfo: [],
+      // genre: [],
+      // status: '',
+      // author: '',
+      // publisher: '',
+      // image: '',
+      // description: '',
+      // release_date: '',
+      // name: '',
     }
   },
   methods: {
@@ -89,11 +98,11 @@ export default {
     },
 
     makeToken() {
-       return`Bearer ${this.getToken()}`;
+      return `Bearer ${this.getToken()}`;
     },
-    getUser()  {
-     axios.get("//localhost:8080/api/api/user", {
-        headers: { Authorization: this.makeToken() },
+    getUser() {
+      axios.get("//localhost:8080/api/api/user", {
+        headers: {Authorization: this.makeToken()},
       })
           .then(response => {
             this.userInfo = response.data
@@ -121,7 +130,7 @@ export default {
       this.modalVisible = true;
       this.book_id = id;
       this.order_date = new Date();
-      this.getBook(id)
+      // this.getBook(id)
     },
     orderBook() {
       axios.post('//localhost:8080/api/api/orders', {
@@ -143,16 +152,18 @@ export default {
     },
     statusChange() {
       let id = this.book_id
-      axios.put('//localhost:8080/api/api/books/' + id, {
-        name: this.name,
-        author: this.author,
-        publisher: this.publisher,
-        description: this.description,
-        release_date: this.release_date,
-        ImageUrl: '///',
-        image: this.image,
-        genre_id: this.genre,
+      axios.post('//localhost:8080/api/api/statuses', {
+        book_id: id,
         status_id: 2
+        // name: this.name,
+        // author: this.author,
+        // publisher: this.publisher,
+        // description: this.description,
+        // release_date: this.release_date,
+        // ImageUrl: '///',
+        // image: this.image,
+        // genre_id: this.genre,
+        // status_id: 2
       })
           .then(response => {
             this.books = []
@@ -168,28 +179,28 @@ export default {
           })
     },
 
-    getBook(id) {
-      axios.get('//localhost:8080/api/api/books/' + id)
-            .then(response => {
-              this.name = response.data.data.name
-              this.author = response.data.data.author
-              this.publisher = response.data.data.publisher
-              this.description = response.data.data.description
-              this.release_date = response.data.data.release_date
-              this.genre = response.data.data.genre.map(value => {
-                return value.id
-              })
-              this.status = response.data.data.status.id
-              this.image = response.data.data.image
-            })
-            .catch(error => {
-              console.log(error)
-              // errored.value = true
-            })
-            .finally(() => {
-              // loading.value = false
-            })
-    },
+    // getBook(id) {
+    //   axios.get('//localhost:8080/api/api/books/' + id)
+    //         .then(response => {
+    //           this.name = response.data.data.name
+    //           this.author = response.data.data.author
+    //           this.publisher = response.data.data.publisher
+    //           this.description = response.data.data.description
+    //           this.release_date = response.data.data.release_date
+    //           this.genre = response.data.data.genre.map(value => {
+    //             return value.id
+    //           })
+    //           this.status = response.data.data.status.id
+    //           this.image = response.data.data.image
+    //         })
+    //         .catch(error => {
+    //           console.log(error)
+    //           // errored.value = true
+    //         })
+    //         .finally(() => {
+    //           // loading.value = false
+    //         })
+    // },
     addBook() {
       // this.getToken();
       const data = new FormData()
