@@ -1,46 +1,30 @@
 <template>
   <div class="container">
     <h1>Книги</h1>
-    <form @submit.prevent="addBook">
-      <div class="form-group">
-        <input type="text" class="form-control mt-3" v-model="name" placeholder="Название книги">
-        <input type="text" class="form-control mt-3" v-model="author" placeholder="Имя Автора">
-        <input type="text" class="form-control mt-3" v-model="publisher" placeholder="Издатель">
-        <input class="form-control mt-3" v-on:change="changeFile" id="photo" name="photo" type="file">
-        <date-pick v-model="release_date" class="mt-3"></date-pick>
-        <textarea placeholder="Описание книги" v-model="description" class="form-control mt-3" rows="3"></textarea>
-        <select class="form-select mt-3" multiple aria-label="multiple select example" v-model="genre">
-          <option v-for="genre in genres" :value="genre.id">{{ genre.title }}</option>
-        </select>
-        <select class="form-select mt-3" aria-label="Default select example" v-model="status">
-          <option v-for="status in statuses" :value="status.id">{{ status.title }}</option>
-        </select>
-        <button type="submit" @click.prevent="addBook" class="btn btn-primary mt-3">Добавить</button>
-      </div>
-    </form>
+    <div class="search row">
+      <h2 class="text-center">Воспользуемся поиском</h2>
+      <input type="text" class="text-center mx-auto w-75" v-model="this.input">
+    </div>
     <div class="row">
-      <div class="col-4" v-for="book in books">
-        <div class="card mt-3">
-          <router-link class="card-body" :to="{name: 'showBook', params: {bookId: book.id}}">
-            <h5 class="card-title">{{ book.name }}</h5>
-            <p class="card-text">{{ book.author }}</p>
-            <p class="card-text">{{ book.description }}</p>
-            <p class="card-text">{{ book.publisher }}</p>
-            <img :src="book.image" alt="" style="max-width: 100%">
-
-            <p class="card-text">{{ book.release_date }}</p>
-            <ul v-for="value in book.genre">
+      <div class="col-4" v-for="u in filteredBooks" :key="u.id" >
+        <div class="card mt-3" v-if="u.status.id !== 2">
+          <div class="card-body">
+            <h5 class="card-title">{{ u.name }}</h5>
+            <p class="card-text">{{ u.author }}</p>
+            <p class="card-text">{{ u.description }}</p>
+            <p class="card-text">{{ u.publisher }}</p>
+            <img :src="u.image" alt="" style="max-width: 100%">
+            <p class="card-text">{{ u.release_date }}</p>
+            <ul v-for="value in u.genre">
               <li>{{value.title}}</li>
             </ul>
-            <div>{{book.status.title}}</div>
-<!--            <div v-for="value in book.status">-->
-<!--           <p>-->
-<!--             {{value}}-->
-<!--           </p>-->
-<!--            </div>-->
-          </router-link>
-          <button type="button" class="btn btn-danger" @click="deleteBook(book.id)">Удалить</button>
+          </div>
+          <button type="button" class="btn btn-danger" @click="showModal(u.id)">Заказать</button>
         </div>
+        <modal v-model:show="modalVisible">
+          <p>Вы уверены, что хотите заказать эту книгу?</p>
+          <button type="button" class="btn btn-primary" @click="orderBook">Заказать</button>
+        </modal>
       </div>
     </div>
     <div class="alert alert-danger" role="alert" v-if="errored">
@@ -49,20 +33,27 @@
     <div class="spinner-border" role="status" v-if="loading">
       <span class="visually-hidden">Loading...</span>
     </div>
+
   </div>
 </template>
 
 <script>
-import showBook from "@/components/books/showBook.vue";
+
 import DatePick from "@/components/books/date-pick.vue";
 import dayjs from "dayjs";
+import Modal from "@/components/books/modal.vue";
+import {integer} from "@vuelidate/validators";
 
 
 export default {
-  components: {DatePick},
+  components: {Modal, DatePick},
   computed: {
-    showBook() {
-      return showBook
+    filteredBooks() {
+       return  this.books.filter((u) =>
+          u.author.toLowerCase().includes(this.input.toLowerCase()) ||
+          u.publisher.toLowerCase().includes(this.input.toLowerCase())
+            // u.title.toLowerCase().includes(this.input.toLowerCase())
+      )
     },
   },
   data() {
@@ -71,37 +62,44 @@ export default {
       genres: [],
       statuses: [],
       book_url: null,
-      genre: [],
-      status: null,
-      name: null,
-      author: null,
-      publisher: null,
-      image: null,
-      description: null,
-      release_date: null,
-
       errored: false,
       loading: true,
       data: null,
+      userToken: '',
+      userInfo: '',
+      input:'',
+      modalVisible: false,
+      book_id: integer,
+      order_date: '',
+      bookInfo: [],
+      genre: [],
+      status: '',
+      author: '',
+      publisher: '',
+      image: '',
+      description: '',
+      release_date: '',
+      name: '',
     }
   },
   methods: {
-    changeFile(photo) {
-      this.image = photo.target.files[0]
-      // console.log(photo)
+
+    getToken() {
+      return localStorage.getItem('token')
     },
 
-    showGenre() {
-      axios.get('//localhost:8080/api/api/genres')
+    makeToken() {
+       return`Bearer ${this.getToken()}`;
+    },
+    getUser()  {
+     axios.get("//localhost:8080/api/api/user", {
+        headers: { Authorization: this.makeToken() },
+      })
           .then(response => {
-            this.genres = response.data
+            this.userInfo = response.data
           })
-    }, showStatus() {
-      axios.get('//localhost:8080/api/api/statuses')
-          .then(response => {
-            this.statuses = response.data.filter((status) => {
-              return status.id === 1 || status.id === 4
-            })
+          .catch(error => {
+            console.log(error)
           })
     },
     showAllBooks() {
@@ -117,13 +115,23 @@ export default {
             this.loading = false
           })
     },
-    deleteBook(id) {
-      axios.post('//localhost:8080/api/api/books/' + id, {
-        _method: 'DELETE'
+
+    showModal(id) {
+      console.log(id)
+      this.modalVisible = true;
+      this.book_id = id;
+      this.order_date = new Date();
+      this.getBook(id)
+    },
+    orderBook() {
+      axios.post('//localhost:8080/api/api/orders', {
+        book_id: this.book_id,
+        user_id: this.userInfo.id,
+        order_date: this.order_date
       })
           .then(response => {
-            this.books = []
-            this.showAllBooks()
+            console.log(this.book_id)
+            this.statusChange()
           })
           .catch(error => {
             console.log(error)
@@ -133,12 +141,54 @@ export default {
             this.loading = false
           })
     },
-    getToken(){
-      axios.get('/sanctum/csrf-cookie')
-          .then(response => {
-          return response
+    statusChange() {
+      let id = this.book_id
+      axios.put('//localhost:8080/api/api/books/' + id, {
+        name: this.name,
+        author: this.author,
+        publisher: this.publisher,
+        description: this.description,
+        release_date: this.release_date,
+        ImageUrl: '///',
+        image: this.image,
+        genre_id: this.genre,
+        status_id: 2
       })
+          .then(response => {
+            this.books = []
+            this.showAllBooks()
+            this.modalVisible = false
+          })
+          .catch(error => {
+            console.log(error)
+            this.errored = true
+          })
+          .finally(() => {
+            this.loading = false
+          })
+    },
 
+    getBook(id) {
+      axios.get('//localhost:8080/api/api/books/' + id)
+            .then(response => {
+              this.name = response.data.data.name
+              this.author = response.data.data.author
+              this.publisher = response.data.data.publisher
+              this.description = response.data.data.description
+              this.release_date = response.data.data.release_date
+              this.genre = response.data.data.genre.map(value => {
+                return value.id
+              })
+              this.status = response.data.data.status.id
+              this.image = response.data.data.image
+            })
+            .catch(error => {
+              console.log(error)
+              // errored.value = true
+            })
+            .finally(() => {
+              // loading.value = false
+            })
     },
     addBook() {
       // this.getToken();
@@ -169,8 +219,9 @@ export default {
   },
   mounted() {
     this.showAllBooks()
-    this.showGenre()
-    this.showStatus()
+    this.getToken()
+    this.makeToken()
+    this.getUser()
   }
 }
 

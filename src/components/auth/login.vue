@@ -6,6 +6,7 @@
         <input type="text" class="form-control mt-3" v-model="state.email" placeholder="email...">
         <input type="password" class="form-control mt-3" v-model="state.password" placeholder="password..">
         <button type="submit" @click.prevent="login" class="btn btn-primary mt-3">Добавить</button>
+        <button type="submit" @click.prevent="forgot" class="btn btn-primary mt-3 float-end">Забыли пароль?</button>
       </div>
     </form>
   </div>
@@ -29,12 +30,25 @@ const login = async () => {
       .then(response => {
         if (response.data.success) {
           localStorage.setItem('token', response.data.data.token)
-          router.push('/admin')
+          console.log(response.data.role[0].name)
+          if (response.data.role[0].name === 'user'){
+            router.push('/books')
+          }
+          else if (response.data.role[0].name === 'writer') {
+            router.push('/writer')
+          }
+          else {
+            router.push('/admin')
+          }
         }
         else {
           error.value = response.data.message;
         }
       })
+}
+
+const forgot = () => {
+  router.push('/forgot-password')
 }
 </script>
 

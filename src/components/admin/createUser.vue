@@ -7,7 +7,7 @@
         <input type="text" class="form-control mt-3" v-model="state.email" placeholder="Почта пользователя">
         <input type="text" class="form-control mt-3" v-model="state.password" placeholder="Пароль">
         <input type="text" class="form-control mt-3" v-model="state.c_password" placeholder="Повторите пароль">
-        <select class="form-select mt-3" aria-label="Default select example" v-model="state.role">
+        <select class="form-select mt-3" multiple aria-label="Default select example" v-model="state.role">
           <option v-for="role in state.roles" :value="role.id">{{ role.name }}</option>
         </select>
         <button type="submit" @click.prevent="addUser" class="btn btn-primary mt-3">Добавить</button>
@@ -21,7 +21,7 @@
             <p class="card-text">{{user.email}}</p>
             <p class="card-text">{{user.password}}</p>
             <ul v-for="value in user.role">
-              <li>{{value}}</li>
+              <li>{{value.title}}</li>
             </ul>
           </router-link>
           <button type="button" class="btn btn-danger" @click="deleteUser(user.id)">Удалить</button>

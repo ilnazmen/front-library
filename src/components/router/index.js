@@ -1,14 +1,18 @@
 import {createRouter, createWebHistory} from "vue-router";
-
 import adminPage from '../admin/index.vue'
 import homePage from '../pages/index.vue'
 import notFound from '../notFound.vue'
 import booksPage from '../books/books.vue'
+import adminBooks from '../admin/createBooks.vue'
 import showBook from '../books/showBook.vue'
 import test from '../books/date-pick.vue'
 import login from '../auth/login.vue'
 import users from '../admin/createUser.vue'
 import showUser from '../admin/showUser.vue'
+import forgotPassword from '../auth/forgotPassword.vue'
+import resetPassword from '../auth/resetPassword.vue'
+import modalPage from '../books/modal.vue'
+import writerPage from '../writer/index.vue'
 
 const routes = [
     {
@@ -18,7 +22,6 @@ const routes = [
         meta: {
             requiresAuth: true
         }
-
     },
     {
         path: '/',
@@ -30,8 +33,22 @@ const routes = [
     },
 
     {
-      path: '/books',
-      component: booksPage,
+      path: '/admin/books',
+      component: adminBooks,
+        meta: {
+            requiresAuth: true
+        }
+    },
+    {
+        path: '/books',
+        name: 'Books',
+        component: booksPage,
+        meta: {
+            requiresAuth: true
+        }
+    },{
+        name: 'Modal',
+        component: modalPage,
         meta: {
             requiresAuth: true
         }
@@ -45,7 +62,7 @@ const routes = [
         }
     },
     {
-        path: '/books/:bookId',
+        path: '/admin/books/:bookId',
         component: showBook,
         name: 'showBook',
         props: true,
@@ -71,6 +88,21 @@ const routes = [
         }
     },
     {
+        path: '/forgot-password',
+        name: 'forgotPassword',
+        component: forgotPassword,
+        meta: {
+            requiresAuth: false
+        }
+    },{
+        path: '/reset-password/:token',
+        name: 'resetPassword',
+        component: resetPassword,
+        meta: {
+            requiresAuth: false
+        }
+    },
+    {
         path: '/users',
         name:'users',
         component: users,
@@ -78,6 +110,14 @@ const routes = [
             requiresAuth: true
         }
     },
+    {
+        path: '/writer',
+        name: 'writer',
+        component: writerPage,
+        meta: {
+            requiresAuth: true
+        }
+    }
 ]
 const router = createRouter({
     history: createWebHistory(),
@@ -89,7 +129,7 @@ router.beforeEach((to,from) => {
         return {name: 'Login'}
     }
     if (to.meta.requiresAuth === false && localStorage.getItem('token')) {
-        return {name: 'admin'}
+        return {name: 'Admin'}
     }
 })
 

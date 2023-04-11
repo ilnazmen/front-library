@@ -104,7 +104,7 @@ function savename() {
   data.forEach((el) => console.log(el))
   data.append('_method', 'PUT');
 
-  axios.post('//localhost:8080/api/api/books/' + props.bookId, data)
+  axios.post('localhost:8080/api/api/books/' + props.bookId, data)
       .then(response => {
 
       })
