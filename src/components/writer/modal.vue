@@ -2,7 +2,7 @@
   <div class="dialog" v-if="visible" @click="hideDialog">
     <div class="dialog__content">
       <p>Подтвердите ваше действие</p>
-      <button type="button" class="btn btn-primary" @click="orderConf">Выдать книгу</button>
+      <button type="button" class="btn btn-primary" @click="orderConf(book_id,order_id)">Выдать книгу</button>
     </div>
   </div>
 </template>
@@ -29,13 +29,13 @@ export default {
     hideDialog() {
       this.$emit('close')
     },
-    orderConf: async () => {
+    orderConf: async (idb,ido) => {
       await axios.post('//localhost:8080/api/api/statuses', {
-        book_id: this.book_id,
+        book_id: idb,
         status_id: 3,
-        order_id: this.order_id,
+        order_id: ido
       })
-      this.hideDialog()
+
     }
   }
 }

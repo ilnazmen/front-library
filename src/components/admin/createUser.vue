@@ -28,6 +28,12 @@
         </div>
       </div>
     </div>
+    <div class="alert alert-danger" role="alert" v-if="errored">
+      pizda
+    </div>
+    <div class="spinner-border" role="status" v-if="loading">
+      <span class="visually-hidden">Loading...</span>
+    </div>
   </div>
 </template>
 
@@ -35,6 +41,7 @@
 import {onMounted, reactive, ref} from "vue";
 
 let errored = ref(false)
+let loading = ref(true)
 const state = reactive({
   users: [],
   roles: [],
@@ -64,6 +71,7 @@ function showUsers(){
 onMounted(() => {
   showUsers()
   showRoles()
+  loading.value = false
 })
 function addUser() {
   axios.post("//localhost:8080/api/api/users", {
@@ -82,6 +90,7 @@ function addUser() {
         showUsers()
       })
       .catch(function (error) {
+        errored.value = true;
         console.log(error);
       })}
 function deleteUser(id) {

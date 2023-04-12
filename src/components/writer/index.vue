@@ -1,5 +1,6 @@
 <template>
   <div class="container">
+    <router-link to="/admin/books">Добавить книгу</router-link>
   <h1>Welcome writer</h1>
     <div class="row">
       <div class="col-4" v-for="order in state.orders">
@@ -15,8 +16,22 @@
         <li class="list-group-item">{{order.status.title}}</li>
       </ul>
       <div class="card-body">
-        <button type="button" class="btn btn-primary" @click="showModal(order.book_id.id,order.id )" >Подтвердить</button>
-        <button type="button" style="float: right" class="btn btn-danger" @click="cancel(order.id)">Отменить</button>
+        <button type="button"
+                v-if="order.book_id.status_id === 2"
+                class="btn btn-primary"
+                @click="showModal(order.book_id.id,order.id )" >Подтвердить</button>
+        <button type="button"
+                v-if="order.book_id.status_id === 1"
+                class="btn btn-primary"
+                @click="cancel(order.id, order.book_id.id, 4)">Опубликовать</button>
+        <button type="button"
+                v-if="order.book_id.status_id === 3"
+                class="btn btn-primary"
+                @click="cancel(order.id, order.book_id.id, 1)">Возврат</button>
+        <button type="button"
+                style="float: right"
+                class="btn btn-danger"
+                @click="cancel(order.id, order.book_id.id,4)">Отменить</button>
       </div>
     </div>
       </div>
@@ -72,14 +87,19 @@ const userRole = async () => {
         state.userRole = response.data.data.role.map(value => {
           return value.title
         })
-        if (state.userRole != "writer") {
+        if (state.userRole != "writer" && state.userRole != "admin") {
           router.push("/books")
         }
+        order()
       })
 }
 
-const order = async () => {
-  await axios.get('//localhost:8080/api/api/orders')
+const order = async (idb,ido) => {
+  await axios.get('//localhost:8080/api/api/orders', {
+    book_id: idb,
+    order_id: ido,
+    status_id: 4
+  })
       .then(response => {
         state.orders = response.data.data
       })
@@ -94,16 +114,28 @@ function showModal(book_id,order_id) {
     book_id:book_id,
     order_id:order_id
   }
+  order()
 }
 
 
 
-const cancel = async () => {
+const cancel = async (ido, idb, status) => {
+  await axios.delete('//localhost:8080/api/api/orders/' + ido,{
+    params: {
+      book_id: idb,
+      status_id: status
+    }
+  })
+      .then(response => {
 
-}
+      })
+      .catch(error => {
+        console.log(error)
+      })
+  order()
+      }
 
 onMounted( () => {
   user()
-  order()
 })
 </script>

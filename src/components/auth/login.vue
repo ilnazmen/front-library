@@ -8,6 +8,9 @@
         <button type="submit" @click.prevent="login" class="btn btn-primary mt-3">Добавить</button>
         <button type="submit" @click.prevent="forgot" class="btn btn-primary mt-3 float-end">Забыли пароль?</button>
       </div>
+      <div class="alert alert-danger" role="alert" v-if="error">
+        pizda
+      </div>
     </form>
   </div>
 </template>

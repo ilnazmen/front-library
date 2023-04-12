@@ -13,6 +13,7 @@ import forgotPassword from '../auth/forgotPassword.vue'
 import resetPassword from '../auth/resetPassword.vue'
 import modalPage from '../books/modal.vue'
 import writerPage from '../writer/index.vue'
+import userOrders from '../books/userOrders.vue'
 
 const routes = [
     {
@@ -117,6 +118,14 @@ const routes = [
         meta: {
             requiresAuth: true
         }
+    },
+    {
+        path: '/user-orders',
+        name: 'userOrders',
+        component: userOrders,
+        meta: {
+            requiresAuth: true
+        }
     }
 ]
 const router = createRouter({
@@ -129,7 +138,7 @@ router.beforeEach((to,from) => {
         return {name: 'Login'}
     }
     if (to.meta.requiresAuth === false && localStorage.getItem('token')) {
-        return {name: 'Admin'}
+        return {name: 'Home'}
     }
 })
 

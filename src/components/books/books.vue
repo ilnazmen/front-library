@@ -1,5 +1,8 @@
 <template>
   <div class="container">
+    <router-link to="/books">Книги</router-link>
+    <br>
+    <router-link to="/user-orders">Заказы</router-link>
     <h1>Книги</h1>
     <div class="search row">
       <h2 class="text-center">Воспользуемся поиском</h2>
@@ -7,7 +10,7 @@
     </div>
     <div class="row">
       <div class="col-4" v-for="book in filteredBooks" :key="book.id">
-        <div class="card mt-3" v-if="book.status.id !== 2">
+        <div class="card mt-3">
           <div class="card-body">
             <h5 class="card-title">{{ book.name }}</h5>
             <p class="card-text">{{ book.author }}</p>
@@ -19,7 +22,10 @@
               <li>{{ value.title }}</li>
             </ul>
           </div>
-          <button type="button" class="btn btn-danger" @click="showModal(book.id)">Заказать</button>
+          <button type="button" v-if="book.status.id === 4" class="btn btn-danger" @click="showModal(book.id)">Заказать</button>
+          <button type="button"
+                  v-if="book.status.id === 2 || book.status.id === 3 || book.status.id === 1"
+                  class="btn btn-dark">Недоступно к заказу</button>
         </div>
       </div>
       <modal v-model:show="modalVisible">
@@ -155,15 +161,6 @@ export default {
       axios.post('//localhost:8080/api/api/statuses', {
         book_id: id,
         status_id: 2
-        // name: this.name,
-        // author: this.author,
-        // publisher: this.publisher,
-        // description: this.description,
-        // release_date: this.release_date,
-        // ImageUrl: '///',
-        // image: this.image,
-        // genre_id: this.genre,
-        // status_id: 2
       })
           .then(response => {
             this.books = []
@@ -179,54 +176,32 @@ export default {
           })
     },
 
-    // getBook(id) {
-    //   axios.get('//localhost:8080/api/api/books/' + id)
-    //         .then(response => {
-    //           this.name = response.data.data.name
-    //           this.author = response.data.data.author
-    //           this.publisher = response.data.data.publisher
-    //           this.description = response.data.data.description
-    //           this.release_date = response.data.data.release_date
-    //           this.genre = response.data.data.genre.map(value => {
-    //             return value.id
-    //           })
-    //           this.status = response.data.data.status.id
-    //           this.image = response.data.data.image
-    //         })
-    //         .catch(error => {
-    //           console.log(error)
-    //           // errored.value = true
-    //         })
-    //         .finally(() => {
-    //           // loading.value = false
-    //         })
-    // },
-    addBook() {
-      // this.getToken();
-      const data = new FormData()
-      data.append('image', this.image)
-      data.append('name', this.name)
-      data.append('author', this.author)
-      data.append('publisher', this.publisher)
-      data.append('description', this.description)
-      data.append('release_date', dayjs(this.release_date).format())
-      data.append('status_id', this.status)
-      this.genre.forEach((genre) => {
-        data.append("genre_id[]", genre)
-      })
-      data.append('ImageUrl', '///')
-
-      axios.post('//localhost:8080/api/api/books/', data)
-          .then(response => {
-            this.name = ''
-            this.books = []
-            this.showAllBooks()
-          })
-          .catch(error => {
-            console.log(error)
-            errored.value = true
-          })
-    }
+    // addBook() {
+    //   // this.getToken();
+    //   const data = new FormData()
+    //   data.append('image', this.image)
+    //   data.append('name', this.name)
+    //   data.append('author', this.author)
+    //   data.append('publisher', this.publisher)
+    //   data.append('description', this.description)
+    //   data.append('release_date', dayjs(this.release_date).format())
+    //   data.append('status_id', this.status)
+    //   this.genre.forEach((genre) => {
+    //     data.append("genre_id[]", genre)
+    //   })
+    //   data.append('ImageUrl', '///')
+    //
+    //   axios.post('//localhost:8080/api/api/books/', data)
+    //       .then(response => {
+    //         this.name = ''
+    //         this.books = []
+    //         this.showAllBooks()
+    //       })
+    //       .catch(error => {
+    //         console.log(error)
+    //         errored.value = true
+    //       })
+    // }
   },
   mounted() {
     this.showAllBooks()

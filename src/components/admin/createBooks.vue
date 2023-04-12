@@ -1,5 +1,6 @@
 <template>
   <div class="container">
+    <router-link to="/writer">Выдать книгу</router-link>
     <h1>Книги</h1>
     <form @submit.prevent="addBook">
       <div class="form-group">
@@ -33,11 +34,6 @@
               <li>{{value.title}}</li>
             </ul>
             <div>{{book.status.title}}</div>
-<!--            <div v-for="value in book.status">-->
-<!--           <p>-->
-<!--             {{value}}-->
-<!--           </p>-->
-<!--            </div>-->
           </router-link>
           <button type="button" class="btn btn-danger" @click="deleteBook(book.id)">Удалить</button>
         </div>
