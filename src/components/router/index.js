@@ -5,7 +5,7 @@ import notFound from '../notFound.vue'
 import booksPage from '../books/books.vue'
 import adminBooks from '../admin/createBooks.vue'
 import showBook from '../books/showBook.vue'
-import test from '../books/date-pick.vue'
+import test from '../books/testval.vue'
 import login from '../auth/login.vue'
 import users from '../admin/createUser.vue'
 import showUser from '../admin/showUser.vue'
@@ -16,6 +16,14 @@ import writerPage from '../writer/index.vue'
 import userOrders from '../books/userOrders.vue'
 
 const routes = [
+    {
+        path: '/test',
+        name:'test',
+        component: test,
+        meta: {
+            requiresAuth: true
+        }
+    },
     {
         path: '/admin',
         name:'admin',
@@ -29,7 +37,7 @@ const routes = [
         name: 'Home',
         component: homePage,
         meta: {
-            requiresAuth: true
+            requiresAuth: false
         }
     },
 
@@ -135,9 +143,6 @@ const router = createRouter({
 
 router.beforeEach((to,from) => {
     if(to.meta.requiresAuth && !localStorage.getItem('token')){
-        return {name: 'Login'}
-    }
-    if (to.meta.requiresAuth === false && localStorage.getItem('token')) {
         return {name: 'Home'}
     }
 })

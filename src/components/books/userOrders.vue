@@ -18,6 +18,10 @@
               <li v-if="o.book.status_id === 3" class="list-group-item">Дата возвращения {{o.return_date}}</li>
             </ul>
             <p class="card-text text-info" v-if="o.book.status_id === 2">Ваш заказ ещё не подтверждён</p>
+            <button type="button"
+                    style="float: right"
+                    class="btn btn-danger"
+                    @click="cancel(o.id, o.book_id,4)">Отменить</button>
           </div>
         </div>
       </div>
@@ -83,6 +87,22 @@ const order = async () => {
 
         console.log(state.order)
       })
+}
+
+const cancel = async (ido, idb, status) => {
+  await axios.delete('//localhost:8080/api/api/orders/' + ido,{
+    params: {
+      book_id: idb,
+      status_id: status
+    }
+  })
+      .then(response => {
+
+      })
+      .catch(error => {
+        console.log(error)
+      })
+  order()
 }
 
 onMounted(() => {

@@ -35,7 +35,11 @@
       </div>
     </div>
       </div>
-      <modal :visible="modalVisible" :book_id="modalData.book_id" :order_id="modalData.order_id" @close="modalVisible = false">
+      <modal :visible="modalVisible"
+             :book_id="modalData.book_id"
+             :order_id="modalData.order_id"
+             @close="modalVisible = false"
+             @update="order()">
       </modal>
     </div>
     <button  @click.prevent="logout" class="btn btn-primary mt-3">Выйти</button>
@@ -94,12 +98,8 @@ const userRole = async () => {
       })
 }
 
-const order = async (idb,ido) => {
-  await axios.get('//localhost:8080/api/api/orders', {
-    book_id: idb,
-    order_id: ido,
-    status_id: 4
-  })
+const order = async () => {
+  await axios.get('//localhost:8080/api/api/orders')
       .then(response => {
         state.orders = response.data.data
       })

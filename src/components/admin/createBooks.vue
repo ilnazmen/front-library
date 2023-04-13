@@ -19,6 +19,9 @@
         <button type="submit" @click.prevent="addBook" class="btn btn-primary mt-3">Добавить</button>
       </div>
     </form>
+    <div class="alert alert-danger" role="alert" v-if="errored">
+      {{errored}}
+    </div>
     <div class="row">
       <div class="col-4" v-for="book in books">
         <div class="card mt-3">
@@ -28,7 +31,6 @@
             <p class="card-text">{{ book.description }}</p>
             <p class="card-text">{{ book.publisher }}</p>
             <img :src="book.image" alt="" style="max-width: 100%">
-
             <p class="card-text">{{ book.release_date }}</p>
             <ul v-for="value in book.genre">
               <li>{{value.title}}</li>
@@ -38,9 +40,6 @@
           <button type="button" class="btn btn-danger" @click="deleteBook(book.id)">Удалить</button>
         </div>
       </div>
-    </div>
-    <div class="alert alert-danger" role="alert" v-if="errored">
-      pizda
     </div>
     <div class="spinner-border" role="status" v-if="loading">
       <span class="visually-hidden">Loading...</span>
@@ -153,13 +152,15 @@ export default {
 
       axios.post('//localhost:8080/api/api/books/', data)
           .then(response => {
+            this.errored = false
             this.name = ''
             this.books = []
             this.showAllBooks()
           })
           .catch(error => {
-            console.log(error)
-            errored.value = true
+            console.log(this.errored)
+            this.errored = error.response.data?.message
+
           })
     }
   },

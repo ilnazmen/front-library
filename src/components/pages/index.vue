@@ -1,9 +1,10 @@
 <template>
-  <h1>Welcome default user</h1>
-  <div>
-    <router-link to="/admin">admin</router-link>
-  </div>
+  <div class="text-center">
+  <h1 class="h4">Для начала работы вам надо авторизироваться</h1>
   <div>
     <router-link to="/login">Login</router-link>
+  </div>
+    <div class="img">
+      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMgAAABkCAMAAAD0WI85AAAAllBMVEX///8AAABm1P8QjuhERES7u7uIiIgzMzPu7u5VVVURERHMzMyZmZmqqqoiIiJmZmbd3d13d3cPgNHL8P8QiN4bk+nm8/3s+v+A2//4/P677P+L3v9kreHY9P+p5//K5vpUru8nmeq03Pie0fY3oexzvfJEoeR4ueeZ4v+gze2/3fPf7vkhi9c6l9lOod2l5v8qjtZrseMwVuLgAAAEZElEQVR4nO2Y2XLbOBBFARrgAu5KZHniWE4y9sTZZ/7/56YXAAQYKeWyklKpqs+DBZIQ2bfRfQlLKUEQBEEQBEEQBEEQBEEQBEEQBEEQfjf377bvP5w7iN/A31fAw7mjOJ37K+Kvc8dxMo8s5PrccZzMQ1yR69vduYM5hS3p2MLoVVG8OXc0J8AL8g+M9kVRXPCisJCPMHoqkFfnDuilsJBPMLohIcWPgwbWNZV2pqxh2Jhm4pN1YwwPW2MaPmcN0eBUP0bKFwdobft8Ia8/w6jw3PxcXnWlmapWLXz4sBoY1jQyMLLxHOFaNeqIUapcjmxy1KhBL+M2jKxPywBZcPy8OrnZMSFflNoVkXV5RR1aj6qHvwOdXkadjuqWqYbkeWalxj7cb6jTIx8xf3Yzf5Ya16GrSM9Uzemc8uDykpANlNPdImTtXpBZB6ViHSwJpxKfMrmYnEFXqBFBRdZ2eE211lo+thB6FUqkdio5yoObQ5Az3M5Wtf8GLXyYM3ZHhXxV5L7HlDif7lk3PdSOowRDvsN50DaiRqD1KlEuJTPWnNLhdpRZnT1BzT44Y5NJ8YBHYRHNwaYhId9g8CYVUqR9YkMr1Ph30FAxjkKFfsDn1yDI+sA7/znTHP4u36WNlY2ZbVd1HmJ24UTfqHrILwcBqxykQr4rfo0s7JMppQ/K30YbqKMeUj80nG1cELWsBIaIZdf471Y+sjHcAbO/HGXBLbGPpbJNvOzqZc5U/VrIj0zIbTJlTn0CUmygjhqwmp6zjUFPWH64Orha6DOhokYvKG1RTO+qYUNwoZ/VBIawzCF9bchIow5BpvX2JyE3yRTDPcFA7ZiejajnbI/U537SYqVc9FX06qXgNd9TL1YXkx9it0OfGhvpi4Z2+J0UheyProgLUdFt8OEY7lCXlG1s57EsK162IKPyQcDQjwbvQJz9eJQHNw70+hxI9WJsdDmYVWPVIaKQvNlT2wpl0lXgwQZVldQRDSU0eVlwb/fstkQwMZW0MWU/aToKLhhSZ238+tLUpGHw+4lqOi4Ee2SXCUn3KZrr3Dq/GBbboqMy6in0QIuFl4XYR9OymWnZlWmF4FJDmkx2ObTIEdNiIV8x7qdER/Zux5f1gFalXV3HyBQblcHtBNBRW8yr/UMZj8vYZpj95SgLrk0NaRE7Ya+P5fr0ASEb/PFhd3PkfdiHjMP2yYZdiX9FYPxTkDXnvqBo5+V9do5thumd85dzeKvkpqzD3tSA9Nb5cu1WOciF/IsvwN2td6y71ZyeNlBursm0wsMsVpxJd5ANV1suJFR/blp5w3b+nrkhzVxwLe60puAex0zL77U2b+ngbv/0tF/LQGprD7fYs4mtQ9l3YZHLLLiVIZWu8g7WDTE/5rBp8b+6m83m42lx/iFa72DPyOKDF7L578J/EXrkJgG+XfbPjdehtqC6LntNPmx5Sb7fnzuSU7l+fH+1vXwZgiAIgiAIgiAIgiAIgiAIgiAIgiC8nP8Bx5YoexyHE+UAAAAASUVORK5CYII=" alt=""></div>
   </div>
 </template>

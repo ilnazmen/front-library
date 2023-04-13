@@ -28,9 +28,9 @@
       <!--        Макс количество символов:-->
       <!--      </div>-->
     </div>
-    <!--    <div class="alert alert-danger" role="alert" v-if="errored">-->
-    <!--      pizda-->
-    <!--    </div>-->
+        <div class="alert alert-danger" role="alert" v-if="errored">
+          {{ errored }}
+        </div>
     <div class="spinner-border" role="status" v-if="loading">
       <span class="visually-hidden">Loading...</span>
     </div>
@@ -48,9 +48,9 @@ import books from "@/components/books/books.vue";
 
 const props = defineProps(['bookId'])
 
-// const bookForm = reactive({
-//   name: '',
-// })
+const bookForm = reactive({
+  name: '',
+})
 
 const errored = ref(false)
 const loading = ref(true)
@@ -71,22 +71,22 @@ const state = reactive({
   formdata: null,
 })
 
-// const rules = {
-//   name: {
-//     required,
-//     maxLength: maxLength(20)
-//   }
-// }
-// const validator = useVuelidate(rules, state)
-// const form = async () => {
-//   const result = await validator.value.$validate();
-//
-//   if (result) {
-//     console.log('oke')
-//   } else {
-//     alert("hui")
-//   }
-// }
+const rules = {
+  name: {
+    required,
+    maxLength: maxLength(20)
+  }
+}
+const validator = useVuelidate(rules, state)
+const form = async () => {
+  const result = await validator.value.$validate();
+
+  if (result) {
+    console.log('oke')
+  } else {
+    alert("hui")
+  }
+}
 
 function savename() {
   const data = new FormData()
@@ -106,11 +106,11 @@ function savename() {
 
   axios.post('//localhost:8080/api/api/books/' + props.bookId, data)
       .then(response => {
-
+        errored.value = false
       })
       .catch(error => {
         console.log(error)
-        errored.value = true
+        errored.value = error.response.data?.message
       })
       .finally(() => {
         loading.value = false

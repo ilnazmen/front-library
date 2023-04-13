@@ -13,11 +13,15 @@
 <script setup>
 import {useRouter} from "vue-router"
 import {onMounted, reactive} from "vue";
+import { useVuelidate } from '@vuelidate/core'
+import { required, email, helpers, minLength } from '@vuelidate/validators'
 
 const state = reactive({
   userId: '',
   userRole: ''
 })
+
+
 
 const router = useRouter()
 const logout =  () => {
@@ -40,6 +44,7 @@ const user = async () => {
   })
        .catch(error => {
          console.log(error)
+         logout()
        })
 }
 
@@ -53,6 +58,9 @@ const userRole = async () => {
         if (state.userRole != "admin") {
           router.push("/books")
         }
+      })
+      .catch(error => {
+
       })
 }
 

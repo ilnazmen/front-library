@@ -35,7 +35,7 @@ export default {
         status_id: 3,
         order_id: ido
       })
-
+      this.$emit('update')
     }
   }
 }
