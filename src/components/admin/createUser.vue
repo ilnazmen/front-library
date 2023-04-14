@@ -106,7 +106,6 @@ function showUsers(){
         state.users = response.data.data
       })
       .catch(error => {
-        console.log(error)
         errored.value = true
       })
 }

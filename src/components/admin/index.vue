@@ -48,7 +48,6 @@ const user = async () => {
 }
 
 const userRole = async () => {
-  console.log(state.userId)
   await axios.get('//localhost:8080/api/api/users/' + state.userId)
       .then(response => {
         state.userRole = response.data.data.role.map(value => {

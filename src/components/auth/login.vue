@@ -65,7 +65,6 @@ const login = async () => {
           .then(response => {
             if (response.data.success) {
               localStorage.setItem('token', response.data.data.token)
-              console.log(response.data.role[0].name)
               if (response.data.role[0].name === 'user'){
                 router.push('/books')
               }
