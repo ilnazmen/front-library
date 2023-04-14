@@ -160,7 +160,6 @@ export default {
           .catch(error => {
             console.log(this.errored)
             this.errored = error.response.data?.message
-
           })
     }
   },

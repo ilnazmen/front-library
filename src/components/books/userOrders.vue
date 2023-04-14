@@ -19,6 +19,7 @@
             </ul>
             <p class="card-text text-info" v-if="o.book.status_id === 2">Ваш заказ ещё не подтверждён</p>
             <button type="button"
+                    v-if="o.book.status_id === 2"
                     style="float: right"
                     class="btn btn-danger"
                     @click="cancel(o.id, o.book_id,4)">Отменить</button>
@@ -61,22 +62,10 @@ const user = async () => {
         // userRole()
       })
       .catch(error => {
-        console.log(error)
+        logout()
       })
 }
 
-// const userRole = async () => {
-//   console.log(state.userId)
-//   await axios.get('//localhost:8080/api/api/users/' + state.userId)
-//       .then(response => {
-//         state.userRole = response.data.data.role.map(value => {
-//           return value.title
-//         })
-//         // if (state.userRole != "admin") {
-//         //   router.push("/books")
-//         // }
-//       })
-// }
 
 const order = async () => {
   await axios.post('//localhost:8080/api/api/user-orders', {
@@ -84,8 +73,6 @@ const order = async () => {
   })
       .then(response => {
         state.order = response.data
-
-        console.log(state.order)
       })
 }
 
@@ -97,10 +84,8 @@ const cancel = async (ido, idb, status) => {
     }
   })
       .then(response => {
-
       })
       .catch(error => {
-        console.log(error)
       })
   order()
 }

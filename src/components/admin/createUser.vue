@@ -5,12 +5,18 @@
       <div class="form-group">
         <input type="text" class="form-control mt-3" v-model="state.name" placeholder="Имя пользователя">
         <input type="text" class="form-control mt-3" v-model="state.email" placeholder="Почта пользователя">
-        <input type="text" class="form-control mt-3" v-model="state.password" placeholder="Пароль">
-        <input type="text" class="form-control mt-3" v-model="state.c_password" placeholder="Повторите пароль">
-        <select class="form-select mt-3" multiple aria-label="Default select example" v-model="state.role">
+        <input type="password" class="form-control mt-3" v-model="state.password" placeholder="Пароль">
+        <input type="password" class="form-control mt-3" v-model="state.c_password" placeholder="Повторите пароль">
+        <select class="form-select mt-3"  aria-label="Default select example" v-model="state.role">
           <option v-for="role in state.roles" :value="role.id">{{ role.name }}</option>
         </select>
         <button type="submit" @click.prevent="addUser" class="btn btn-primary mt-3">Добавить</button>
+        <div class="alert alert-danger" role="alert" v-if="errored">
+          <div v-for="error in errored"><li>{{error[0]}}</li></div>
+        </div>
+        <div class="spinner-border" role="status" v-if="loading">
+          <span class="visually-hidden">Loading...</span>
+        </div>
       </div>
     </form>
     <div class="row">
@@ -28,17 +34,14 @@
         </div>
       </div>
     </div>
-    <div class="alert alert-danger" role="alert" v-if="errored">
-      pizda
-    </div>
-    <div class="spinner-border" role="status" v-if="loading">
-      <span class="visually-hidden">Loading...</span>
-    </div>
   </div>
 </template>
 
 <script setup>
 import {onMounted, reactive, ref} from "vue";
+import {useRouter} from "vue-router";
+
+const router = useRouter();
 
 let errored = ref(false)
 let loading = ref(true)
@@ -51,6 +54,45 @@ const state = reactive({
   c_password: '',
   role: '',
 })
+
+const logout =  () => {
+  localStorage.removeItem('token')
+  router.push('/')
+}
+
+
+const userToken = () => localStorage.getItem('token')
+
+const getAuthorizationHeader = () => `Bearer ${userToken()}`;
+
+const user = async () => {
+  await axios.get("//localhost:8080/api/api/user", {
+    headers: { Authorization: getAuthorizationHeader() },
+  })
+      .then(response => {
+        state.userId = response.data.id
+        userRole()
+      })
+      .catch(error => {
+        logout()
+      })
+}
+
+const userRole = async () => {
+  console.log(state.userId)
+  await axios.get('//localhost:8080/api/api/users/' + state.userId)
+      .then(response => {
+        state.userRole = response.data.data.role.map(value => {
+          return value.title
+        })
+        if (state.userRole != "admin") {
+          router.push("/books")
+        }
+      })
+      .catch(error => {
+        logout()
+      })
+}
 
 function showRoles() {
   axios.get('//localhost:8080/api/api/roles')
@@ -71,6 +113,7 @@ function showUsers(){
 onMounted(() => {
   showUsers()
   showRoles()
+  user()
   loading.value = false
 })
 function addUser() {
@@ -90,8 +133,7 @@ function addUser() {
         showUsers()
       })
       .catch(function (error) {
-        errored.value = true;
-        console.log(error);
+        errored.value = error.response.data?.message
       })}
 function deleteUser(id) {
   axios.delete('//localhost:8080/api/api/users/' + id)
@@ -100,12 +142,7 @@ function deleteUser(id) {
         showUsers()
       })
       .catch(error => {
-        console.log(error)
-        console.log(id)
-        errored.value = true
-      })
-      .finally(() => {
-
+        errored.value = error.response.data?.message
       })
 }
 </script>

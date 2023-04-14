@@ -49,7 +49,8 @@ import DatePick from "@/components/books/date-pick.vue";
 import dayjs from "dayjs";
 import Modal from "@/components/books/modal.vue";
 import {integer} from "@vuelidate/validators";
-
+import {useRouter} from "vue-router";
+const router = useRouter();
 
 export default {
   components: {Modal, DatePick},
@@ -86,19 +87,14 @@ export default {
       modalVisible: false,
       book_id: integer,
       order_date: '',
-      // bookInfo: [],
-      // genre: [],
-      // status: '',
-      // author: '',
-      // publisher: '',
-      // image: '',
-      // description: '',
-      // release_date: '',
-      // name: '',
     }
   },
   methods: {
 
+   logout () {
+      localStorage.removeItem('token')
+      router.push('/')
+    },
     getToken() {
       return localStorage.getItem('token')
     },
@@ -114,7 +110,7 @@ export default {
             this.userInfo = response.data
           })
           .catch(error => {
-            console.log(error)
+            this.logout()
           })
     },
     showAllBooks() {
@@ -136,7 +132,6 @@ export default {
       this.modalVisible = true;
       this.book_id = id;
       this.order_date = new Date();
-      // this.getBook(id)
     },
     orderBook() {
       axios.post('//localhost:8080/api/api/orders', {
@@ -176,32 +171,6 @@ export default {
           })
     },
 
-    // addBook() {
-    //   // this.getToken();
-    //   const data = new FormData()
-    //   data.append('image', this.image)
-    //   data.append('name', this.name)
-    //   data.append('author', this.author)
-    //   data.append('publisher', this.publisher)
-    //   data.append('description', this.description)
-    //   data.append('release_date', dayjs(this.release_date).format())
-    //   data.append('status_id', this.status)
-    //   this.genre.forEach((genre) => {
-    //     data.append("genre_id[]", genre)
-    //   })
-    //   data.append('ImageUrl', '///')
-    //
-    //   axios.post('//localhost:8080/api/api/books/', data)
-    //       .then(response => {
-    //         this.name = ''
-    //         this.books = []
-    //         this.showAllBooks()
-    //       })
-    //       .catch(error => {
-    //         console.log(error)
-    //         errored.value = true
-    //       })
-    // }
   },
   mounted() {
     this.showAllBooks()

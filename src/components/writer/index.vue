@@ -81,7 +81,7 @@ const user = async () => {
         userRole()
       })
       .catch(error => {
-        console.log(error)
+        logout()
       })
 }
 
@@ -114,7 +114,6 @@ function showModal(book_id,order_id) {
     book_id:book_id,
     order_id:order_id
   }
-  order()
 }
 
 

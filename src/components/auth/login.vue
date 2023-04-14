@@ -1,6 +1,7 @@
 <template>
   <div class="container">
     <p class="text-danger" v-if="error">{{error}}</p>
+    <h2>Введите ваши данные</h2>
     <form @submit.prevent="login">
       <div class="form-group mt-3">
         <input type="text"
@@ -17,7 +18,7 @@
         <div class="input-password" v-for="error of v$.password.$errors">
         <div class="error-msg">{{error.$message}}</div>
         </div>
-        <button type="submit" @click.prevent="login" class="btn btn-primary mt-3">Добавить</button>
+        <button type="submit" @click.prevent="login" class="btn btn-primary mt-3">Войти</button>
         <button type="submit" @click.prevent="forgot" class="btn btn-primary mt-3 float-end">Забыли пароль?</button>
       </div>
       <div class="alert alert-danger" role="alert" v-if="error">

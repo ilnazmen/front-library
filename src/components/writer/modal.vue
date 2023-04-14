@@ -25,11 +25,15 @@ export default {
       required: true
     }
   },
+  emits: [
+      'close',
+      'update'
+  ],
   methods: {
     hideDialog() {
       this.$emit('close')
     },
-    orderConf: async (idb,ido) => {
+    async orderConf (idb,ido)  {
       await axios.post('//localhost:8080/api/api/statuses', {
         book_id: idb,
         status_id: 3,
