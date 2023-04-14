@@ -3,6 +3,8 @@
     <router-link to="/books">Книги</router-link>
     <br>
     <router-link to="/user-orders">Заказы</router-link>
+    <br>
+    <button  @click.prevent="logout" class="btn btn-primary mt-3">Выйти</button>
     <h1>Книги</h1>
     <div class="search row">
       <h2 class="text-center">Воспользуемся поиском</h2>
@@ -39,7 +41,6 @@
     <div class="spinner-border" role="status" v-if="loading">
       <span class="visually-hidden">Loading...</span>
     </div>
-
   </div>
 </template>
 
@@ -50,7 +51,8 @@ import dayjs from "dayjs";
 import Modal from "@/components/books/modal.vue";
 import {integer} from "@vuelidate/validators";
 import {useRouter} from "vue-router";
-const router = useRouter();
+import router from "@/components/router";
+
 
 export default {
   components: {Modal, DatePick},
@@ -90,10 +92,10 @@ export default {
     }
   },
   methods: {
-
+    router () {useRouter()},
    logout () {
       localStorage.removeItem('token')
-      router.push('/')
+     this.$router.push('/')
     },
     getToken() {
       return localStorage.getItem('token')
@@ -119,7 +121,6 @@ export default {
             this.books = response.data.data
           })
           .catch(error => {
-            console.log(error)
             this.errored = true
           })
           .finally(() => {
@@ -144,7 +145,6 @@ export default {
             this.statusChange()
           })
           .catch(error => {
-            console.log(error)
             this.errored = true
           })
           .finally(() => {
@@ -163,7 +163,6 @@ export default {
             this.modalVisible = false
           })
           .catch(error => {
-            console.log(error)
             this.errored = true
           })
           .finally(() => {
